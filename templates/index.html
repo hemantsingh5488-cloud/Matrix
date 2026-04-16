@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Login</title>
+</head>
+<body>
+
+    <h2>Phone OTP Login</h2>
+
+    <input type="text" id="phone" placeholder="Enter phone number">
+    <br><br>
+
+    <button id="sendBtn" type="button" onclick="sendOTP()">Send OTP</button>
+
+    <br><br>
+
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <br><br>
+
+    <button onclick="verifyOTP()">Verify OTP</button>
+
+    <p id="result"></p>
+
+<script>
+let isSending = false;
+
+async function sendOTP() {
+    if (isSending) return; // 🚫 STOP loop
+
+    isSending = true;
+
+    let phone = document.getElementById("phone").value;
+    let btn = document.getElementById("sendBtn");
+
+    btn.disabled = true;
+    btn.innerText = "Sending...";
+
+    document.getElementById("result").innerText = "Sending OTP... ⏳";
+
+    try {
+        let res = await fetch("/send-otp", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ phone: phone })
+        });
+
+        let data = await res.json();
+        document.getElementById("result").innerText = data.message;
+
+    } catch (error) {
+        document.getElementById("result").innerText = "Error sending OTP ❌";
+        isSending = false;
+        btn.disabled = false;
+        btn.innerText = "Send OTP";
+    }
+}
+
+
+
+async function verifyOTP() {
+    let phone = document.getElementById("phone").value;
+    let otp = document.getElementById("otp").value;
+
+    document.getElementById("result").innerText = "Verifying OTP... ⏳";
+
+    try {
+        let res = await fetch("http://127.0.0.1:5000/verify-otp", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ phone: phone, otp: otp })
+        });
+
+        let data = await res.json();
+
+        document.getElementById("result").innerText = data.message;
+
+    } catch (error) {
+        document.getElementById("result").innerText = "Verification failed ❌";
+    }
+}
+
+</script>
+
+</body>
+</html>
