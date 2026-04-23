@@ -49,7 +49,7 @@ def store_otp(phone: str, otp: str) -> None:
 
 
 def send_otp_via_whatsapp(phone: str, otp: str) -> bool:
-    print(f"[SIMULATED OTP] {phone}: {otp}")
+    print(f"[SIMULATED OTP] {phone}: {otp}") 
     return True
     
 def validate_phone(phone: str) -> bool:
