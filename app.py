@@ -6,11 +6,7 @@ from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from flask import render_template
-try:
-    import pywhatkit as pwk
-    PYWHATKIT_AVAILABLE = True
-except ImportError:
-    PYWHATKIT_AVAILABLE = False
+PYWHATKIT_AVAILABLE = False
     logging.warning(
         "PyWhatKit is not installed. WhatsApp sending will be simulated. "
         "Install it with: pip install pywhatkit"
@@ -57,6 +53,8 @@ def store_otp(phone: str, otp: str) -> None:
 
 
 def send_otp_via_whatsapp(phone: str, otp: str) -> bool:
+    print(f"[SIMULATED OTP] {phone}: {otp}")
+    return True
     if not PYWHATKIT_AVAILABLE:
         logger.warning(f"[SIMULATED] OTP {otp} would be sent to +{phone}")
         return True
