@@ -7,10 +7,6 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from flask import render_template
 PYWHATKIT_AVAILABLE = False
-    logging.warning(
-        "PyWhatKit is not installed. WhatsApp sending will be simulated. "
-        "Install it with: pip install pywhatkit"
-    )
 
 app = Flask(__name__)
 CORS(app)
@@ -55,30 +51,7 @@ def store_otp(phone: str, otp: str) -> None:
 def send_otp_via_whatsapp(phone: str, otp: str) -> bool:
     print(f"[SIMULATED OTP] {phone}: {otp}")
     return True
-    if not PYWHATKIT_AVAILABLE:
-        logger.warning(f"[SIMULATED] OTP {otp} would be sent to +{phone}")
-        return True
-
-    message = f"Your OTP is {otp}. It is valid for {OTP_EXPIRY_SECONDS // 60} minutes. Do not share it with anyone."
-
-    try:
-        logger.info(f"Sending WhatsApp OTP instantly to +{phone}")
-
-        pwk.sendwhatmsg_instantly(
-            phone_no=f"+{phone}",
-            message=message,
-            wait_time=15,
-            tab_close=True,
-            close_time=5
-        )
-
-        logger.info(f"OTP sent successfully for +{phone}")
-        return True
-
-    except Exception as e:
-        logger.error(f"Failed to send OTP via WhatsApp to +{phone}: {e}")
-        return False
-
+    
 def validate_phone(phone: str) -> bool:
    
     return phone.isdigit() and 7 <= len(phone) <= 15
@@ -267,5 +240,9 @@ if __name__ == "__main__":
     print("=" * 65)
     print()
 
-    # debug=False for cleaner output; use debug=True during local development
-    app.run(host="0.0.0.0", port=5000, debug=False)
+   import os
+
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000))
+    )
